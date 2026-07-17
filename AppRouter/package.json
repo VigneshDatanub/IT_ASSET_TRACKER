@@ -1,0 +1,14 @@
+{
+  "name": "it-asset-tracker-approuter",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node node_modules/@sap/approuter/approuter.js"
+  },
+  "dependencies": {
+    "@sap/approuter": "^20.8.0"
+  },
+  "engines": {
+    "node": "22.x"
+  }
+}

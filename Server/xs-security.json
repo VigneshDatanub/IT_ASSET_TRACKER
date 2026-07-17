@@ -1,0 +1,39 @@
+{
+  "xsappname": "it-asset-tracker",
+  "tenant-mode": "dedicated",
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.AssetViewer",
+      "description": "View IT assets and assigned assets"
+    },
+    {
+      "name": "$XSAPPNAME.AssetManager",
+      "description": "Create, edit, assign assets and add maintenance"
+    },
+    {
+      "name": "$XSAPPNAME.Administrator",
+      "description": "Full IT Asset Tracker administration"
+    }
+  ],
+  "role-templates": [
+    {
+      "name": "AssetViewer",
+      "description": "IT Asset Viewer",
+      "scope-references": ["$XSAPPNAME.AssetViewer"]
+    },
+    {
+      "name": "AssetManager",
+      "description": "IT Asset Manager",
+      "scope-references": ["$XSAPPNAME.AssetViewer", "$XSAPPNAME.AssetManager"]
+    },
+    {
+      "name": "Administrator",
+      "description": "IT Asset Administrator",
+      "scope-references": [
+        "$XSAPPNAME.AssetViewer",
+        "$XSAPPNAME.AssetManager",
+        "$XSAPPNAME.Administrator"
+      ]
+    }
+  ]
+}

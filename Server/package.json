@@ -1,0 +1,29 @@
+{
+  "name": "it-asset-tracker-server",
+  "version": "1.0.0",
+  "description": "Backend API for IT Asset Tracker",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "seed": "node src/db/seed.js",
+    "test": "node --import ./tests/setup.js --test"
+  },
+  "dependencies": {
+    "@sap/xssec": "^4.13.3",
+    "@sap/xssec": "^4.13.3",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.1",
+    "express": "^4.21.2",
+    "express-validator": "^7.0.1",
+    "helmet": "^8.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.1",
+    "pg": "^8.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.1"
+  }
+}

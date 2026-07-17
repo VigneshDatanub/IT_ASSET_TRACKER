@@ -1,0 +1,11 @@
+applications:
+  - name: it-asset-tracker-approuter
+    memory: 256M
+    instances: 1
+    buildpacks:
+      - nodejs_buildpack
+    services:
+      - it-asset-tracker-xsuaa
+    env:
+      destinations: >-
+        [{"name":"backend","url":"https://it-asset-tracker-api.cfapps.us10-003.hana.ondemand.com","forwardAuthToken":true}]

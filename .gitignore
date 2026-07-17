@@ -1,0 +1,5 @@
+Server/.env
+**/node_modules/
+Client/dist/
+*.log
+Server/server.err

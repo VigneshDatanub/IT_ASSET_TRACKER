@@ -1,0 +1,6 @@
+applications:
+  - name: it-asset-tracker-ui
+    buildpacks:
+      - staticfile_buildpack
+    memory: 256M
+    instances: 1

@@ -1,0 +1,12 @@
+applications:
+  - name: it-asset-tracker-api
+    buildpacks:
+      - nodejs_buildpack
+    memory: 512M
+    instances: 1
+    services:
+      - pgdb
+      - it-asset-tracker-xsuaa
+    env:
+      NODE_ENV: production
+      AUTH_MODE: xsuaa
