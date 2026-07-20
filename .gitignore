@@ -3,6 +3,7 @@ Server/.env
 Client/dist/
 *.log
 Server/server.err
+.vscode
 
 
 
