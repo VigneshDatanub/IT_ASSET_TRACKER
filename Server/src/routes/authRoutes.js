@@ -8,7 +8,8 @@ import config from '../config/env.js';
 const router = express.Router();
 
 function localAuthOnly(req, res, next) {
-  if (config.authMode === 'xsuaa') {
+  const hasXsuaaBinding = Boolean(config.xsuaa?.clientid || config.xsuaa?.url);
+  if (config.authMode === 'xsuaa' && hasXsuaaBinding) {
     return res.status(410).json({ success: false, message: 'Use XSUAA login through the application router' });
   }
   next();

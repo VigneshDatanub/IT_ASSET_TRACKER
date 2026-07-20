@@ -43,11 +43,7 @@ async function authenticateWithXsuaa(req, next) {
   }
 }
 
-async function authenticate(req, res, next) {
-  if (config.authMode === 'xsuaa') {
-    return authenticateWithXsuaa(req, next);
-  }
-
+async function authenticateWithMock(req, res, next) {
   const header = req.headers.authorization || '';
   const token = header.startsWith('Bearer ') ? header.slice(7) : null;
 
@@ -74,6 +70,16 @@ async function authenticate(req, res, next) {
     authError.statusCode = 401;
     next(authError);
   }
+}
+
+async function authenticate(req, res, next) {
+  const hasXsuaaBinding = Boolean(config.xsuaa?.clientid || config.xsuaa?.url);
+
+  if (config.authMode === 'xsuaa' && hasXsuaaBinding) {
+    return authenticateWithXsuaa(req, next);
+  }
+
+  return authenticateWithMock(req, res, next);
 }
 
 export default authenticate;
