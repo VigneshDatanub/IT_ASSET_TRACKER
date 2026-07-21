@@ -41,21 +41,34 @@ export default function CategoriesPage() {
 
   return (
     <div>
-      <div className="card">
-        <h2>Categories</h2>
-        <div className="grid">
-          {categories.map((category) => (
-            <div key={category.id} className="card">
-              <strong>{category.name}</strong>
-              <p>{category.description || 'No description provided.'}</p>
-              <div className="button-row">
-                <button type="button" onClick={() => setEditingCategory(category)}>Edit</button>
-                <button type="button" onClick={() => handleDelete(category.id)} className="secondary">Delete</button>
-              </div>
-            </div>
-          ))}
+      <div className="top-panel">
+        <div>
+          <h2>Categories</h2>
+          <p>Maintain asset categories and keep the tracker aligned with your business structure.</p>
         </div>
+        <span className="badge">Admin only</span>
       </div>
+
+      <div className="grid">
+        {categories.map((category) => (
+          <div key={category.id} className="card category-card">
+            <div className="card-header">
+              <div>
+                <p className="asset-id">{category.name}</p>
+                <p>{category.description || 'No description provided.'}</p>
+              </div>
+              <span className={`status-badge ${category.is_active ? 'available' : 'retired'}`}>
+                {category.is_active ? 'Active' : 'Inactive'}
+              </span>
+            </div>
+            <div className="button-row">
+              <button type="button" onClick={() => setEditingCategory(category)}>Edit</button>
+              <button type="button" onClick={() => handleDelete(category.id)} className="secondary">Delete</button>
+            </div>
+          </div>
+        ))}
+      </div>
+
       <CategoryForm
         category={editingCategory}
         onSaved={() => {

@@ -24,15 +24,28 @@ export default function MyAssetsPage() {
   if (error) return <div className="card">{error}</div>;
 
   return (
-    <div className="card">
-      <h2>My Assets</h2>
-      {assets.length === 0 ? <p>No assigned assets found.</p> : (
+    <div>
+      <div className="top-panel">
+        <div>
+          <h2>My Assets</h2>
+          <p>Only assets assigned to you are shown here so you can quickly see what you currently hold.</p>
+        </div>
+      </div>
+      {assets.length === 0 ? (
+        <div className="card">No assigned assets found.</div>
+      ) : (
         <div className="grid">
           {assets.map((asset) => (
-            <div key={asset.id} className="card">
-              <strong>{asset.name}</strong>
-              <p>Status: {asset.status}</p>
-              <p>Location: {asset.location || 'N/A'}</p>
+            <div key={asset.id} className="card asset-card">
+              <div className="card-header">
+                <div>
+                  <p className="asset-id">{asset.asset_id}</p>
+                  <h3>{asset.name}</h3>
+                </div>
+                <span className={`status-badge ${asset.status.toLowerCase()}`}>{asset.status}</span>
+              </div>
+              <p>{asset.description || 'No description available.'}</p>
+              <p><strong>Location:</strong> {asset.location || 'N/A'}</p>
             </div>
           ))}
         </div>

@@ -35,7 +35,7 @@ The current workspace was verified with fresh checks:
 
 ## SAP BTP deployment guidance
 1. Build the frontend with the correct backend URL:
-   - cd Client && VITE_API_URL=https://<your-backend-app>.cfapps.<region>.hana.ondemand.com npm run build
+   - cd Client && VITE_API_URL=https://it-asset-tracker-api.cfapps.us10-003.hana.ondemand.com npm run build
 2. Deploy the backend using the manifest in Server/manifest.yml.
 3. Deploy the frontend using the manifest in Client/manifest.yml.
 4. Deploy the application router using AppRouter/manifest.yml.
@@ -44,6 +44,52 @@ The current workspace was verified with fresh checks:
    - AUTH_MODE=xsuaa
    - DB_HOST / DB_PORT / DB_NAME / DB_USER / DB_PASSWORD or bind a PostgreSQL service
 6. Ensure the XSUAA service is bound to the backend and approuter for real SAP authentication.
+
+## Copy-paste SAP BTP deployment checklist
+Run the following commands from the project root after replacing the placeholders with your BTP values.
+
+```bash
+# 1) Log in and target your BTP org/space
+cf login -a https://api.cf.<region>.hana.ondemand.com --sso
+cf target -o <your-org> -s <your-space>
+
+# 2) Create the XSUAA service instance
+cf create-service xsuaa application it-asset-tracker-xsuaa -c '{"xsappname":"it-asset-tracker-approuter","tenant-mode":"shared"}'
+
+# 3) Build the frontend with the backend URL you will use in production
+cd Client
+npm install
+VITE_API_URL=https://it-asset-tracker-api.cfapps.us10-003.hana.ondemand.com npm run build
+
+# 4) Deploy the backend
+cd ../Server
+cf push -f manifest.yml
+
+# 5) Deploy the frontend
+cd ../Client
+cf push -f manifest.yml
+
+# 6) Deploy the application router
+cd ../AppRouter
+npm install
+cf push -f manifest.yml
+
+# 7) Bind XSUAA to the deployed applications
+cf bind-service it-asset-tracker-api it-asset-tracker-xsuaa
+cf bind-service it-asset-tracker-approuter it-asset-tracker-xsuaa
+
+# 8) Set backend environment variables
+cf set-env it-asset-tracker-api JWT_SECRET <strong-secret>
+cf set-env it-asset-tracker-api AUTH_MODE xsuaa
+cf set-env it-asset-tracker-api NODE_ENV production
+cf restage it-asset-tracker-api
+
+# 9) Optional: bind a PostgreSQL service if you want the cloud database path enabled
+cf bind-service it-asset-tracker-api <your-postgres-service>
+cf restage it-asset-tracker-api
+```
+
+After the apps are running, open the approuter URL and verify that login, role-based navigation, and API access all work correctly.
 
 ## Current project maturity
 - Core app functionality: complete

@@ -10,8 +10,15 @@
       "csrfProtection": false
     },
     {
+      "source": "^/assets/(.*)$",
+      "target": "/assets/$1",
+      "localDir": "public",
+      "authenticationType": "xsuaa",
+      "cacheControl": "no-cache"
+    },
+    {
       "source": "^/(.*)$",
-      "target": "/$1",
+      "target": "/index.html",
       "localDir": "public",
       "authenticationType": "xsuaa",
       "cacheControl": "no-cache"

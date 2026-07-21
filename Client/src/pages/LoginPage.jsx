@@ -40,8 +40,10 @@ export default function LoginPage() {
 
   return (
     <div className="auth-card">
-      <h2>{isRegistering ? 'Create account' : 'Sign in'}</h2>
-      <p>{isRegistering ? 'Register for the IT Asset Tracker' : 'Access the IT Asset Tracker'}</p>
+      <div className="auth-header">
+        <h2>{isRegistering ? 'Create an account' : 'Welcome back'}</h2>
+        <p>{isRegistering ? 'Register to join the IT Asset Tracker' : 'Sign in to view and manage your assigned equipment'}</p>
+      </div>
       <form onSubmit={isRegistering ? handleRegister : handleSubmit}>
         <div className="form-group">
           <label>Username</label>
@@ -57,9 +59,14 @@ export default function LoginPage() {
           <label>Password</label>
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </div>
-        {error ? <p>{error}</p> : null}
+        {error ? <p className="form-error">{error}</p> : null}
         <button type="submit">{isRegistering ? 'Create account' : 'Login'}</button>
       </form>
+      {!isRegistering ? (
+        <div className="auth-note">
+          <p>Demo sign-in: <strong>admin / admin123</strong> or <strong>manager / manager123</strong> or <strong>user / user123</strong>.</p>
+        </div>
+      ) : null}
       <p>
         <button type="button" onClick={() => setIsRegistering(!isRegistering)} className="secondary">
           {isRegistering ? 'Back to login' : 'Need an account? Sign up'}

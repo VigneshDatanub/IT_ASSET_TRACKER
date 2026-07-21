@@ -65,4 +65,15 @@ async function verifyPassword(password, hash, username) {
   return bcrypt.compare(password, hash);
 }
 
-export { getUserByUsername, getUserById, getUserByEmail, createUser, verifyPassword };
+async function getAllUsers() {
+  if (config.authMode === 'mock') {
+    return mockRepository.users.map((u) => ({ id: u.id, username: u.username, email: u.email, role: u.role }));
+  }
+
+  const result = await pool.query(
+    'SELECT id, username, email, role FROM users WHERE is_active = TRUE ORDER BY username ASC'
+  );
+  return result.rows;
+}
+
+export { getUserByUsername, getUserById, getUserByEmail, createUser, verifyPassword, getAllUsers };

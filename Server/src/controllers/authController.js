@@ -50,3 +50,8 @@ export const register = asyncHandler(async (req, res) => {
 export const getMe = asyncHandler(async (req, res) => {
   res.json({ success: true, data: req.user });
 });
+
+export const getUsers = asyncHandler(async (req, res) => {
+  const users = await userModel.getAllUsers();
+  res.json({ success: true, data: users });
+});

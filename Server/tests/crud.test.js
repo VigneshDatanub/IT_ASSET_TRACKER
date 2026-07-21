@@ -55,3 +55,49 @@ test('mock asset deletion should remove the item from the repository', async () 
   assert.ok(deleted, 'asset should be deleted');
   assert.equal(deleted.asset_id, 'ASSET-2002');
 });
+
+test('mock asset unique constraint should reject duplicate asset_id', async () => {
+  await assetModel.createAsset({
+    asset_id: 'ASSET-UNIQUE-TEST',
+    name: 'Unique Test Asset',
+    category_id: 1,
+    purchase_date: '2024-07-01',
+    purchase_cost: 100,
+    status: 'Available'
+  });
+
+  await assert.rejects(
+    async () => {
+      await assetModel.createAsset({
+        asset_id: 'ASSET-UNIQUE-TEST',
+        name: 'Another Duplicate Asset',
+        category_id: 1,
+        purchase_date: '2024-07-01',
+        purchase_cost: 100,
+        status: 'Available'
+      });
+    },
+    (err) => {
+      assert.equal(err.code, '23505');
+      assert.equal(err.constraint, 'assets_asset_id_key');
+      return true;
+    },
+    'Should throw a 23505 unique constraint violation'
+  );
+});
+
+test('mock asset update should support unassignment', async () => {
+  const asset = await assetModel.createAsset({
+    asset_id: 'ASSET-ASSIGN-TEST',
+    name: 'Assign Test Asset',
+    category_id: 1,
+    purchase_date: '2024-07-01',
+    purchase_cost: 100,
+    status: 'Assigned',
+    assigned_to: 3
+  });
+
+  const updated = await assetModel.updateAsset(asset.id, { assigned_to: null, status: 'Available' });
+  assert.equal(updated.assigned_to, null, 'assigned_to should be set to null');
+  assert.equal(updated.status, 'Available', 'status should be set to Available');
+});

@@ -83,22 +83,43 @@ async function updateAsset(id, data) {
     return mockRepository.updateAsset(id, data);
   }
 
-  const result = await pool.query(
-    `UPDATE assets
-     SET asset_id = COALESCE($1, asset_id),
-         name = COALESCE($2, name),
-         description = COALESCE($3, description),
-         category_id = COALESCE($4, category_id),
-         purchase_date = COALESCE($5, purchase_date),
-         purchase_cost = COALESCE($6, purchase_cost),
-         status = COALESCE($7, status),
-         assigned_to = COALESCE($8, assigned_to),
-         location = COALESCE($9, location),
-         updated_at = CURRENT_TIMESTAMP
-     WHERE id = $10
-     RETURNING *`,
-    [data.asset_id, data.name, data.description, data.category_id, data.purchase_date, data.purchase_cost, data.status, data.assigned_to, data.location, id]
-  );
+  const fields = [];
+  const values = [];
+  let index = 1;
+
+  const updatableFields = [
+    'asset_id',
+    'name',
+    'description',
+    'category_id',
+    'purchase_date',
+    'purchase_cost',
+    'status',
+    'assigned_to',
+    'location'
+  ];
+
+  for (const field of updatableFields) {
+    if (data[field] !== undefined) {
+      fields.push(`${field} = $${index}`);
+      values.push(data[field]);
+      index++;
+    }
+  }
+
+  if (fields.length === 0) {
+    return getAssetById(id);
+  }
+
+  values.push(id);
+  const query = `
+    UPDATE assets
+    SET ${fields.join(', ')}, updated_at = CURRENT_TIMESTAMP
+    WHERE id = $${index}
+    RETURNING *
+  `;
+
+  const result = await pool.query(query, values);
   return result.rows[0];
 }
 

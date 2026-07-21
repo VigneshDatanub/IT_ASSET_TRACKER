@@ -13,17 +13,16 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!token) {
-      setLoading(false);
-      return;
+    if (token) {
+      api.defaults.headers.common.Authorization = `Bearer ${token}`;
     }
 
-    api.defaults.headers.common.Authorization = `Bearer ${token}`;
     api.get('/auth/me')
       .then((response) => setUser(response.data.data))
       .catch(() => {
         localStorage.removeItem('it-asset-token');
         setToken(null);
+        setUser(null);
       })
       .finally(() => setLoading(false));
   }, []);

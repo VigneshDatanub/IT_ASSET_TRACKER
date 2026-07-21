@@ -1,6 +1,7 @@
 import express from 'express';
-import { login, register, getMe } from '../controllers/authController.js';
+import { login, register, getMe, getUsers } from '../controllers/authController.js';
 import authenticate from '../middleware/authMiddleware.js';
+import authorize from '../middleware/authorizeMiddleware.js';
 import { body } from 'express-validator';
 import validate from '../middleware/validateMiddleware.js';
 import config from '../config/env.js';
@@ -39,5 +40,6 @@ router.post(
 );
 
 router.get('/me', authenticate, getMe);
+router.get('/users', authenticate, authorize('assign_asset'), getUsers);
 
 export default router;
