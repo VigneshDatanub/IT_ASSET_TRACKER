@@ -14,13 +14,19 @@ const getInitialForm = (asset, categories = []) => ({
   location: asset?.location || ''
 });
 
-export default function AssetForm({ asset, onSaved }) {
+export default function AssetForm({ asset, onSaved, onCancel }) {
   const [form, setForm] = useState(getInitialForm(asset));
   const [message, setMessage] = useState('');
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    api.get('/categories')
+    const token = localStorage.getItem('it-asset-token');
+    const headers = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    api.get('/categories', { headers })
       .then((response) => setCategories(response.data.data || []))
       .catch(() => setCategories([]));
   }, []);
@@ -37,8 +43,9 @@ export default function AssetForm({ asset, onSaved }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const token = localStorage.getItem('it-asset-token');
+    const headers = {};
     if (token) {
-      api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      headers['Authorization'] = `Bearer ${token}`;
     }
 
     try {
@@ -49,14 +56,12 @@ export default function AssetForm({ asset, onSaved }) {
       };
 
       if (asset?.id) {
-        await api.put(`/assets/${asset.id}`, payload);
-        setMessage('Asset updated successfully');
+        await api.put(`/assets/${asset.id}`, payload, { headers });
+        alert('Asset updated successfully');
       } else {
-        await api.post('/assets', payload);
-        setMessage('Asset created successfully');
+        await api.post('/assets', payload, { headers });
+        alert('Asset created successfully');
       }
-
-      setForm(getInitialForm(null, categories));
       onSaved?.();
     } catch (error) {
       setMessage(error.response?.data?.message || 'Unable to save asset');
@@ -64,54 +69,71 @@ export default function AssetForm({ asset, onSaved }) {
   };
 
   return (
-    <form className="card form-panel" onSubmit={handleSubmit}>
-      <h3>{asset?.id ? 'Edit Asset' : 'Create Asset'}</h3>
-      {message ? <p className="form-message">{message}</p> : null}
-      <div className="form-group">
-        <label>Asset ID</label>
-        <input name="asset_id" value={form.asset_id} onChange={handleChange} required />
-      </div>
-      <div className="form-group">
-        <label>Name</label>
-        <input name="name" value={form.name} onChange={handleChange} required />
-      </div>
-      <div className="form-group">
-        <label>Description</label>
-        <textarea name="description" value={form.description} onChange={handleChange} rows={3} />
-      </div>
-      <div className="form-group">
-        <label>Category</label>
-        <select name="category_id" value={form.category_id} onChange={handleChange} required>
-          <option value="">Select category</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>{category.name}</option>
-          ))}
-        </select>
-      </div>
-      <div className="form-row">
-        <div className="form-group">
-          <label>Purchase Date</label>
-          <input name="purchase_date" type="date" value={form.purchase_date} onChange={handleChange} required />
+    <div className="modal-overlay">
+      <div className="modal-content animate-slide-up">
+        <div className="modal-header">
+          <h3>{asset?.id ? 'Edit Asset details' : 'Register New Asset'}</h3>
+          <button type="button" className="modal-close" onClick={onCancel}>&times;</button>
         </div>
-        <div className="form-group">
-          <label>Purchase Cost</label>
-          <input name="purchase_cost" type="number" value={form.purchase_cost} onChange={handleChange} required />
-        </div>
+        <form onSubmit={handleSubmit}>
+          {message ? <p className="form-error">{message}</p> : null}
+          
+          <div className="form-group">
+            <label>Asset Serial ID</label>
+            <input name="asset_id" value={form.asset_id} onChange={handleChange} placeholder="e.g. ASSET-1024" required />
+          </div>
+          
+          <div className="form-group">
+            <label>Asset Display Name</label>
+            <input name="name" value={form.name} onChange={handleChange} placeholder="e.g. Dell Latitude 5440" required />
+          </div>
+          
+          <div className="form-group">
+            <label>Specifications & Description</label>
+            <textarea name="description" value={form.description} onChange={handleChange} placeholder="e.g. Intel i7, 16GB RAM, 512GB SSD" rows={2} />
+          </div>
+          
+          <div className="form-group">
+            <label>Asset Category Group</label>
+            <select name="category_id" value={form.category_id} onChange={handleChange} required>
+              <option value="">Select category...</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>{category.name}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div className="form-group">
+            <label>Purchase Date</label>
+            <input name="purchase_date" type="date" value={form.purchase_date} onChange={handleChange} required />
+          </div>
+          
+          <div className="form-group">
+            <label>Purchase Valuation ($)</label>
+            <input name="purchase_cost" type="number" step="0.01" value={form.purchase_cost} onChange={handleChange} placeholder="0.00" required />
+          </div>
+          
+          <div className="form-group">
+            <label>Initial Status</label>
+            <select name="status" value={form.status} onChange={handleChange}>
+              <option value="Available">Available</option>
+              <option value="Assigned">Assigned</option>
+              <option value="Maintenance">Maintenance</option>
+              <option value="Retired">Retired</option>
+            </select>
+          </div>
+          
+          <div className="form-group">
+            <label>Physical Storage Location</label>
+            <input name="location" value={form.location} onChange={handleChange} placeholder="e.g. Main Office Rack C" />
+          </div>
+          
+          <div className="button-row" style={{ marginTop: '1.5rem' }}>
+            <button type="button" className="secondary" onClick={onCancel}>Cancel</button>
+            <button type="submit" className="primary">{asset?.id ? 'Save Changes' : 'Confirm Registration'}</button>
+          </div>
+        </form>
       </div>
-      <div className="form-group">
-        <label>Status</label>
-        <select name="status" value={form.status} onChange={handleChange}>
-          <option value="Available">Available</option>
-          <option value="Assigned">Assigned</option>
-          <option value="Maintenance">Maintenance</option>
-          <option value="Retired">Retired</option>
-        </select>
-      </div>
-      <div className="form-group">
-        <label>Location</label>
-        <input name="location" value={form.location} onChange={handleChange} />
-      </div>
-      <button type="submit">{asset?.id ? 'Save Changes' : 'Create Asset'}</button>
-    </form>
+    </div>
   );
 }

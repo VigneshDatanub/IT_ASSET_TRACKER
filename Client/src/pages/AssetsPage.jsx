@@ -139,11 +139,18 @@ export default function AssetsPage() {
           <h2>Assets</h2>
           <p>Browse all tracked assets and manage them according to your role.</p>
         </div>
-        {['asset_manager', 'admin'].includes(user?.role) ? (
-          <span className="badge">Manager tools enabled</span>
-        ) : (
-          <span className="badge muted">Read-only access</span>
-        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          {['asset_manager', 'admin'].includes(user?.role) && (
+            <button type="button" className="primary" onClick={() => setEditingAsset({})}>
+              Register Asset
+            </button>
+          )}
+          {['asset_manager', 'admin'].includes(user?.role) ? (
+            <span className="badge">Manager tools enabled</span>
+          ) : (
+            <span className="badge muted">Read-only access</span>
+          )}
+        </div>
       </div>
 
       <div className="filter-panel card">
@@ -219,6 +226,7 @@ export default function AssetsPage() {
             loadAssets();
             setEditingAsset(null);
           }}
+          onCancel={() => setEditingAsset(null)}
         />
       ) : null}
 

@@ -26,13 +26,31 @@ async function authenticateWithXsuaa(req, next) {
     );
     const payload = securityContext.token.payload;
     const scopes = Array.isArray(payload.scope) ? payload.scope : [];
+    
+    const username = payload.user_name || payload.user || payload.sub;
+    const email = payload.email || `${username}@sap-btp.com`;
+    const role = roleFromScopes(scopes);
+
+    // Look up or synchronize the user record in the local database to get an integer ID
+    let dbUser = await userModel.getUserByUsername(username);
+    if (!dbUser && email) {
+      dbUser = await userModel.getUserByEmail(email);
+    }
+    if (!dbUser) {
+      dbUser = await userModel.createUser({
+        username,
+        email,
+        password: 'BtpXsuaaShadowUserTemporaryPasswordSecure_123!',
+        role
+      });
+    }
 
     req.authInfo = securityContext;
     req.user = {
-      id: payload.user_uuid || payload.user_id || payload.sub,
-      username: payload.user_name || payload.user || payload.sub,
-      email: payload.email,
-      role: roleFromScopes(scopes),
+      id: dbUser.id, // PostgreSQL serial primary key integer
+      username: dbUser.username,
+      email: dbUser.email,
+      role: role,
       scopes
     };
     return next();

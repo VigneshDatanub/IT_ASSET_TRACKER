@@ -32,10 +32,18 @@ async function seedDatabase() {
   `);
 
   await pool.query(`
-    INSERT INTO assets (asset_id, name, description, category_id, purchase_date, purchase_cost, status, location)
-    SELECT 'ASSET-1002', 'iPhone 15', 'Executive phone', id, '2024-03-15', 1199.00, 'Assigned', 'New York Office'
-    FROM categories WHERE name = 'Mobiles'
+    INSERT INTO assets (asset_id, name, description, category_id, purchase_date, purchase_cost, status, location, assigned_to)
+    SELECT 'ASSET-1002', 'iPhone 15', 'Executive phone', c.id, '2024-03-15', 1199.00, 'Assigned', 'New York Office', u.id
+    FROM categories c
+    CROSS JOIN users u
+    WHERE c.name = 'Mobiles' AND u.username = 'user'
     ON CONFLICT (asset_id) DO NOTHING
+  `);
+
+  await pool.query(`
+    UPDATE assets 
+    SET assigned_to = (SELECT id FROM users WHERE username = 'user')
+    WHERE asset_id = 'ASSET-1002' AND assigned_to IS NULL AND status = 'Assigned'
   `);
 
   await pool.query(`

@@ -10,6 +10,7 @@ const mockCategories = [
   { id: 3, name: 'Servers', description: 'Infrastructure servers', is_active: true }
 ];
 
+
 const mockAssets = [
   { id: 1, asset_id: 'ASSET-1001', name: 'Dell Latitude 5440', description: 'Business laptop', category_id: 1, purchase_date: '2024-01-10', purchase_cost: 1450.0, status: 'Available', assigned_to: null, location: 'London Office' },
   { id: 2, asset_id: 'ASSET-1002', name: 'iPhone 15', description: 'Executive phone', category_id: 2, purchase_date: '2024-03-15', purchase_cost: 1199.0, status: 'Assigned', assigned_to: 3, location: 'New York Office' },
