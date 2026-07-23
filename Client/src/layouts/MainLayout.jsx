@@ -257,21 +257,11 @@ export default function MainLayout() {
         </div>
       </aside>
 
-      {/* Mobile Backdrop Overlay */}
-      {!collapsed && <div className="sidebar-mobile-backdrop" onClick={() => setCollapsed(true)} />}
-
       {/* Main Container Area */}
       <div className="main-content">
         {/* Sticky Topbar */}
         <header className="topbar">
           <div className="topbar-left">
-            <button className="mobile-menu-toggle" onClick={toggleSidebar} aria-label="Toggle menu">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="18" x2="21" y2="18" />
-              </svg>
-            </button>
             <div className="breadcrumbs">
               {getBreadcrumbs().map((b, i) => (
                 <span key={i} className="breadcrumb-item">

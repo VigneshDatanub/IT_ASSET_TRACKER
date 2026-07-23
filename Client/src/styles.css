@@ -47,7 +47,7 @@
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5);
 
-  --scroll-track: #0c101b;
+  --scroll-track: #090d16;
   --scroll-thumb: #1e293b;
 }
 
@@ -71,7 +71,7 @@
   --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.04);
   --shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.06);
 
-  --scroll-track: #f1f5f9;
+  --scroll-track: #f8fafc;
   --scroll-thumb: #cbd5e1;
 }
 
@@ -88,10 +88,13 @@
 
 html,
 body {
-  background: var(--bg-main);
+  background: var(--bg-main) !important;
   color: var(--text-primary);
   min-height: 100vh;
+  width: 100%;
   overflow-x: hidden;
+  margin: 0;
+  padding: 0;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -102,7 +105,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-main);
+  background: var(--bg-main) !important;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -110,6 +113,10 @@ body {
   border-radius: 99px;
   border: 2px solid transparent;
   background-clip: padding-box;
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--bg-main) !important;
 }
 
 a {
@@ -329,11 +336,14 @@ a {
   flex-direction: column;
   min-height: 100vh;
   margin-left: 260px;
-  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: calc(100% - 260px);
+  background: var(--bg-main);
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar-collapsed .main-content {
   margin-left: 80px;
+  width: calc(100% - 80px);
 }
 
 /* Sticky Topbar */
@@ -1542,255 +1552,7 @@ a {
   }
 }
 
-.mobile-menu-toggle {
-  display: none;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 8px;
-  background: transparent;
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: all 0.2s ease;
-}
 
-.mobile-menu-toggle svg {
-  width: 20px;
-  height: 20px;
-}
-
-.sidebar-mobile-backdrop {
-  display: none;
-}
-
-/* ==========================================================================
-   RESPONSIVE MEDIA QUERIES FOR ALL SCREEN SIZES
-   ========================================================================== */
-
-/* Laptops & Tablets (Max 1200px) */
-@media (max-width: 1200px) {
-  .hero-section {
-    padding: 1.5rem;
-  }
-}
-
-/* Medium Tablets & Small Laptops (Max 992px) */
-@media (max-width: 992px) {
-  .content-container {
-    padding: 1.5rem;
-  }
-
-  .analytics-panels {
-    flex-direction: column;
-  }
-
-  /* Settings Panel Tab Conversion */
-  .settings-shell {
-    grid-template-columns: 1fr;
-    min-height: auto;
-    gap: 1rem;
-  }
-
-  .settings-tabs {
-    flex-direction: row;
-    border-right: none;
-    border-bottom: 1px solid var(--border-color);
-    padding: 0.5rem;
-    overflow-x: auto;
-    white-space: nowrap;
-    gap: 0.5rem;
-  }
-
-  .tab-btn {
-    border-left: none;
-    border-bottom: 3px solid transparent;
-    padding: 0.65rem 1rem;
-    border-radius: 6px;
-  }
-
-  .tab-btn.active {
-    border-left-color: transparent;
-    border-bottom-color: var(--color-primary);
-    background: var(--color-primary-glow);
-  }
-
-  .settings-content {
-    padding: 1.25rem 0.5rem;
-  }
-}
-
-/* Tablet & Mobile Breakpoint (Max 768px) */
-@media (max-width: 768px) {
-  .mobile-menu-toggle {
-    display: inline-flex;
-  }
-
-  .sidebar-mobile-backdrop {
-    display: block;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    z-index: 190;
-  }
-
-  .sidebar {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 260px !important;
-    z-index: 200;
-    transform: translateX(0);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: var(--shadow-lg);
-  }
-
-  .sidebar-collapsed .sidebar {
-    transform: translateX(-100%);
-  }
-
-  .sidebar-brand h2,
-  .sidebar-workspace .workspace-info,
-  .collapse-btn span,
-  .menu-item span,
-  .menu-item-btn span,
-  .item-badge,
-  .menu-subheader {
-    display: block !important;
-  }
-
-  .main-content,
-  .sidebar-collapsed .main-content {
-    margin-left: 0 !important;
-  }
-
-  .topbar {
-    padding: 0 1rem;
-  }
-
-  .topbar-left {
-    gap: 0.75rem;
-  }
-
-  .filter-panel {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .filter-panel select,
-  .filter-panel input {
-    width: 100% !important;
-  }
-
-  .top-panel {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-
-  .top-panel button,
-  .top-panel .hero-action-btn {
-    width: 100%;
-  }
-
-  .hero-section {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1.25rem;
-    padding: 1.25rem;
-  }
-
-  .hero-right {
-    width: 100%;
-    flex-direction: column;
-  }
-
-  .hero-action-btn {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-/* Mobile Screens (Max 640px) */
-@media (max-width: 640px) {
-  .topbar-datetime {
-    display: none;
-  }
-
-  .global-search-container {
-    width: 38px;
-    padding: 0;
-    justify-content: center;
-    border-radius: 8px;
-    height: 38px;
-  }
-
-  .global-search-container span,
-  .global-search-container kbd {
-    display: none;
-  }
-
-  .breadcrumbs {
-    font-size: 0.8rem;
-    max-width: 160px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
-  .content-container {
-    padding: 1rem;
-  }
-
-  .kpi-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .modal-overlay {
-    padding: 1rem;
-  }
-
-  .modal-content {
-    padding: 1.25rem;
-    max-width: 100%;
-  }
-
-  .toast-notification {
-    left: 16px;
-    right: 16px;
-    bottom: 16px;
-  }
-}
-
-/* Extra Small Phones (Max 480px) */
-@media (max-width: 480px) {
-  .auth-form-card {
-    padding: 1.25rem 1rem;
-    border-radius: 14px;
-  }
-
-  .auth-form-header h2 {
-    font-size: 1.25rem;
-  }
-
-  .button-row {
-    flex-direction: column;
-  }
-
-  .button-row button {
-    width: 100%;
-  }
-}
 
 /* ==========================================================================
    BUTTONS SYSTEM
