@@ -15,7 +15,11 @@ router.post(
   [
     body('asset_id').isInt(),
     body('maintenance_type').isString().trim().notEmpty(),
-    body('description').isString().trim().notEmpty()
+    body('description').isString().trim().notEmpty(),
+    body('cost').optional().isFloat(),
+    body('technician').optional().isString(),
+    body('completion_date').optional().isISO8601().toDate(),
+    body('remarks').optional().isString()
   ],
   validate,
   maintenanceController.createMaintenance

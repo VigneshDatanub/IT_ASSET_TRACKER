@@ -9,8 +9,6 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const [stats, setStats] = useState({
     assets: 0,
-    categories: 0,
-    maintenance: 0,
     available: 0,
     assigned: 0,
     maintenanceStatus: 0,
@@ -27,13 +25,9 @@ export default function DashboardPage() {
       api.defaults.headers.common.Authorization = `Bearer ${token}`;
     }
 
-    Promise.all([
-      api.get('/assets'),
-      api.get('/categories'),
-      api.get('/maintenance')
-    ])
-      .then(([assetsResponse, categoriesResponse, maintenanceResponse]) => {
-        const assets = assetsResponse.data.data || [];
+    api.get('/assets')
+      .then((res) => {
+        const assets = res.data.data || [];
         const statusCounts = assets.reduce(
           (acc, asset) => {
             if (asset.status === 'Assigned') acc.assigned += 1;
@@ -48,8 +42,6 @@ export default function DashboardPage() {
 
         setStats({
           assets: assets.length,
-          categories: categoriesResponse.data.data?.length || 0,
-          maintenance: maintenanceResponse.data.data?.length || 0,
           assigned: statusCounts.assigned,
           available: statusCounts.available,
           maintenanceStatus: statusCounts.maintenanceStatus,
@@ -83,19 +75,10 @@ export default function DashboardPage() {
       {/* Hero Welcome Banner */}
       <section className="hero-section">
         <div className="hero-left">
-          <span className="welcome-tag">Enterprise SaaS Console</span>
           <h2>Good day, {user?.username || 'User'}</h2>
-          <p>You are logged in as <strong className="text-accent">{user?.role?.replace('_', ' ').toUpperCase()}</strong>. Here is the operational summary for <strong>bd13501ftrial</strong>.</p>
+          <p>You are logged in as <strong className="text-accent">{user?.role?.replace('_', ' ').toUpperCase()}</strong>.</p>
         </div>
         <div className="hero-right">
-          {['asset_manager', 'admin'].includes(user?.role) && (
-            <Link to="/assets" className="hero-action-btn primary">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
-              Quick Register
-            </Link>
-          )}
           <Link to="/my-assets" className="hero-action-btn secondary">My Equipment</Link>
         </div>
       </section>
@@ -225,175 +208,95 @@ export default function DashboardPage() {
 
       {/* Main Analytics Panels */}
       <div className="analytics-panels">
-        {/* Left Side: Status Graph Overview & Quick Links */}
-        <div className="panels-left">
-          <div className="card status-overview-card">
-            <h4>Asset Status Allocation</h4>
-            <p className="panel-subheader">Current distribution of inventory assets</p>
-            <div className="status-progress-bars">
-              <div className="progress-item">
-                <div className="item-label">
-                  <span>Available</span>
-                  <span>{stats.available} ({stats.assets > 0 ? ((stats.available / stats.assets) * 100).toFixed(0) : 0}%)</span>
-                </div>
-                <div className="progress-track">
-                  <div className="progress-fill available" style={{ width: `${stats.assets > 0 ? (stats.available / stats.assets) * 100 : 0}%` }}></div>
-                </div>
+        <div className="card status-overview-card">
+          <h4>Asset Status Allocation</h4>
+          <p className="panel-subheader">Current distribution of inventory assets</p>
+          <div className="status-progress-bars">
+            <div className="progress-item">
+              <div className="item-label">
+                <span>Available</span>
+                <span>{stats.available} ({stats.assets > 0 ? ((stats.available / stats.assets) * 100).toFixed(0) : 0}%)</span>
               </div>
-              
-              <div className="progress-item">
-                <div className="item-label">
-                  <span>Assigned</span>
-                  <span>{stats.assigned} ({stats.assets > 0 ? ((stats.assigned / stats.assets) * 100).toFixed(0) : 0}%)</span>
-                </div>
-                <div className="progress-track">
-                  <div className="progress-fill assigned" style={{ width: `${stats.assets > 0 ? (stats.assigned / stats.assets) * 100 : 0}%` }}></div>
-                </div>
-              </div>
-
-              <div className="progress-item">
-                <div className="item-label">
-                  <span>In Service</span>
-                  <span>{stats.maintenanceStatus} ({stats.assets > 0 ? ((stats.maintenanceStatus / stats.assets) * 100).toFixed(0) : 0}%)</span>
-                </div>
-                <div className="progress-track">
-                  <div className="progress-fill maintenance" style={{ width: `${stats.assets > 0 ? (stats.maintenanceStatus / stats.assets) * 100 : 0}%` }}></div>
-                </div>
-              </div>
-
-              <div className="progress-item">
-                <div className="item-label">
-                  <span>Retired</span>
-                  <span>{stats.retired} ({stats.assets > 0 ? ((stats.retired / stats.assets) * 100).toFixed(0) : 0}%)</span>
-                </div>
-                <div className="progress-track">
-                  <div className="progress-fill retired" style={{ width: `${stats.assets > 0 ? (stats.retired / stats.assets) * 100 : 0}%` }}></div>
-                </div>
+              <div className="progress-track">
+                <div className="progress-fill available" style={{ width: `${stats.assets > 0 ? (stats.available / stats.assets) * 100 : 0}%` }}></div>
               </div>
             </div>
-          </div>
+            
+            <div className="progress-item">
+              <div className="item-label">
+                <span>Assigned</span>
+                <span>{stats.assigned} ({stats.assets > 0 ? ((stats.assigned / stats.assets) * 100).toFixed(0) : 0}%)</span>
+              </div>
+              <div className="progress-track">
+                <div className="progress-fill assigned" style={{ width: `${stats.assets > 0 ? (stats.assigned / stats.assets) * 100 : 0}%` }}></div>
+              </div>
+            </div>
 
-          <div className="card quick-actions-card">
-            <h4>Quick Shortcuts</h4>
-            <div className="action-buttons-list">
-              <Link to="/assets" className="action-btn-item">
-                <div className="btn-icon bg-blue">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                  </svg>
-                </div>
-                <div className="btn-text">
-                  <h5>Serials Catalog</h5>
-                  <p>Browse inventory units</p>
-                </div>
-              </Link>
-              
-              {user?.role === 'admin' && (
-                <Link to="/categories" className="action-btn-item">
-                  <div className="btn-icon bg-emerald">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <line x1="4" y1="9" x2="20" y2="9" /><line x1="4" y1="15" x2="20" y2="15" />
-                    </svg>
-                  </div>
-                  <div className="btn-text">
-                    <h5>Categories Setup</h5>
-                    <p>Edit asset groupings</p>
-                  </div>
-                </Link>
-              )}
+            <div className="progress-item">
+              <div className="item-label">
+                <span>In Service</span>
+                <span>{stats.maintenanceStatus} ({stats.assets > 0 ? ((stats.maintenanceStatus / stats.assets) * 100).toFixed(0) : 0}%)</span>
+              </div>
+              <div className="progress-track">
+                <div className="progress-fill maintenance" style={{ width: `${stats.assets > 0 ? (stats.maintenanceStatus / stats.assets) * 100 : 0}%` }}></div>
+              </div>
+            </div>
 
-              {['asset_manager', 'admin'].includes(user?.role) && (
-                <Link to="/maintenance" className="action-btn-item">
-                  <div className="btn-icon bg-orange">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6Z" />
-                    </svg>
-                  </div>
-                  <div className="btn-text">
-                    <h5>Maintenance Log</h5>
-                    <p>Review repair schedules</p>
-                  </div>
-                </Link>
-              )}
+            <div className="progress-item">
+              <div className="item-label">
+                <span>Retired</span>
+                <span>{stats.retired} ({stats.assets > 0 ? ((stats.retired / stats.assets) * 100).toFixed(0) : 0}%)</span>
+              </div>
+              <div className="progress-track">
+                <div className="progress-fill retired" style={{ width: `${stats.assets > 0 ? (stats.retired / stats.assets) * 100 : 0}%` }}></div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Right Side: Recent Activity Timeline */}
-        <div className="panels-right">
-          <div className="card timeline-card">
-            <h4>Workspace Activity Timeline</h4>
-            <p className="panel-subheader">Audited changes inside the workspace</p>
-            <div className="timeline-items">
-              <div className="timeline-item">
-                <div className="timeline-bullet bg-blue"></div>
-                <div className="timeline-content">
-                  <p className="event-desc">Asset registered: <strong>Dell Latitude 5440</strong></p>
-                  <p className="event-time">Synced to Database</p>
-                </div>
-              </div>
-              <div className="timeline-item">
-                <div className="timeline-bullet bg-emerald"></div>
-                <div className="timeline-content">
-                  <p className="event-desc">Asset assigned: <strong>iPhone 15</strong> assigned to user</p>
-                  <p className="event-time">Token Signature Verified</p>
-                </div>
-              </div>
-              <div className="timeline-item">
-                <div className="timeline-bullet bg-orange"></div>
-                <div className="timeline-content">
-                  <p className="event-desc">Asset maintenance logged: <strong>Dell PowerEdge R760</strong> firmware upgraded</p>
-                  <p className="event-time">Authorized by Asset Manager</p>
-                </div>
-              </div>
+        <section className="card recent-table-card">
+          <div className="table-header">
+            <div>
+              <h4>Recently Registered Serials</h4>
+              <p className="panel-subheader">Latest records stored in the cloud PostgreSQL cluster</p>
             </div>
+            <Link to="/assets" className="table-header-link">View all assets &rarr;</Link>
           </div>
-        </div>
-      </div>
-
-      {/* Recent Assets Data Table */}
-      <section className="card recent-table-card">
-        <div className="table-header">
-          <div>
-            <h4>Recently Registered Serials</h4>
-            <p className="panel-subheader">Latest records stored in the cloud PostgreSQL cluster</p>
-          </div>
-          <Link to="/assets" className="table-header-link">View all assets &rarr;</Link>
-        </div>
-        <div className="table-wrapper">
-          <table className="saas-table">
-            <thead>
-              <tr>
-                <th>Asset ID</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Purchase Cost</th>
-                <th>Status</th>
-                <th>Location</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentAssets.map((asset) => (
-                <tr key={asset.id} className="table-row-hover">
-                  <td><code className="asset-id-badge">{asset.asset_id}</code></td>
-                  <td className="font-semibold">{asset.name}</td>
-                  <td>{asset.category_name || `ID: ${asset.category_id}`}</td>
-                  <td>${Number(asset.purchase_cost || 0).toLocaleString()}</td>
-                  <td>
-                    <span className={`status-badge ${asset.status.toLowerCase()}`}>{asset.status}</span>
-                  </td>
-                  <td>{asset.location || 'N/A'}</td>
-                </tr>
-              ))}
-              {recentAssets.length === 0 && (
+          <div className="table-wrapper">
+            <table className="saas-table">
+              <thead>
                 <tr>
-                  <td colSpan="6" className="text-center py-4">No assets found.</td>
+                  <th>Asset ID</th>
+                  <th>Name</th>
+                  <th>Category</th>
+                  <th>Purchase Cost</th>
+                  <th>Status</th>
+                  <th>Location</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </section>
+              </thead>
+              <tbody>
+                {recentAssets.map((asset) => (
+                  <tr key={asset.id} className="table-row-hover">
+                    <td><code className="asset-id-badge">{asset.asset_id}</code></td>
+                    <td className="font-semibold">{asset.name}</td>
+                    <td>{asset.category_name || `ID: ${asset.category_id}`}</td>
+                    <td>${Number(asset.purchase_cost || 0).toLocaleString()}</td>
+                    <td>
+                      <span className={`status-badge ${asset.status.toLowerCase()}`}>{asset.status}</span>
+                    </td>
+                    <td>{asset.location || 'N/A'}</td>
+                  </tr>
+                ))}
+                {recentAssets.length === 0 && (
+                  <tr>
+                    <td colSpan="6" className="text-center py-4">No assets found.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

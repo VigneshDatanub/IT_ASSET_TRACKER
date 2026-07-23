@@ -11,14 +11,21 @@ const mockCategories = [
 ];
 
 
+const getPastDate = (daysAgo, hoursAgo = 0) => {
+  const d = new Date();
+  d.setDate(d.getDate() - daysAgo);
+  d.setHours(d.getHours() - hoursAgo);
+  return d.toISOString();
+};
+
 const mockAssets = [
-  { id: 1, asset_id: 'ASSET-1001', name: 'Dell Latitude 5440', description: 'Business laptop', category_id: 1, purchase_date: '2024-01-10', purchase_cost: 1450.0, status: 'Available', assigned_to: null, location: 'London Office' },
-  { id: 2, asset_id: 'ASSET-1002', name: 'iPhone 15', description: 'Executive phone', category_id: 2, purchase_date: '2024-03-15', purchase_cost: 1199.0, status: 'Assigned', assigned_to: 3, location: 'New York Office' },
-  { id: 3, asset_id: 'ASSET-1003', name: 'Dell PowerEdge R760', description: 'Data center server', category_id: 3, purchase_date: '2023-11-20', purchase_cost: 8200.0, status: 'Maintenance', assigned_to: null, location: 'Data Center A' }
+  { id: 1, asset_id: 'ASSET-1001', name: 'Dell Latitude 5440', description: 'Business laptop', category_id: 1, purchase_date: '2024-01-10', purchase_cost: 1450.0, status: 'Available', assigned_to: null, location: 'London Office', created_at: getPastDate(3), updated_at: getPastDate(3) },
+  { id: 2, asset_id: 'ASSET-1002', name: 'iPhone 15', description: 'Executive phone', category_id: 2, purchase_date: '2024-03-15', purchase_cost: 1199.0, status: 'Assigned', assigned_to: 3, location: 'New York Office', created_at: getPastDate(1, 4), updated_at: getPastDate(0, 2) },
+  { id: 3, asset_id: 'ASSET-1003', name: 'Dell PowerEdge R760', description: 'Data center server', category_id: 3, purchase_date: '2023-11-20', purchase_cost: 8200.0, status: 'Maintenance', assigned_to: null, location: 'Data Center A', created_at: getPastDate(5), updated_at: getPastDate(5) }
 ];
 
 const mockMaintenance = [
-  { id: 1, asset_id: 3, performed_by: 2, maintenance_type: 'Firmware Upgrade', description: 'Upgraded server firmware', performed_at: '2024-05-01T10:00:00.000Z' }
+  { id: 1, asset_id: 3, performed_by: 2, maintenance_type: 'Firmware Upgrade', description: 'Upgraded server firmware', performed_at: getPastDate(0, 4) }
 ];
 
 export { mockUsers, mockCategories, mockAssets, mockMaintenance };

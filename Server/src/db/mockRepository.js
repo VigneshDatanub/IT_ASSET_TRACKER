@@ -124,7 +124,8 @@ class MockRepository {
       throw error;
     }
 
-    const asset = { id: this.nextAssetId++, ...payload };
+    const now = new Date().toISOString();
+    const asset = { id: this.nextAssetId++, ...payload, created_at: now, updated_at: now };
     this.assets.push(asset);
     return this._enrichAsset(asset);
   }
@@ -140,7 +141,7 @@ class MockRepository {
 
     const index = this.assets.findIndex((asset) => asset.id === Number(id));
     if (index === -1) return null;
-    this.assets[index] = { ...this.assets[index], ...payload };
+    this.assets[index] = { ...this.assets[index], ...payload, updated_at: new Date().toISOString() };
     return this._enrichAsset(this.assets[index]);
   }
 

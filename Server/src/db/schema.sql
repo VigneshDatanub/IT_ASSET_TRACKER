@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS assets (
   category_id INT NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
   purchase_date DATE NOT NULL,
   purchase_cost NUMERIC(12,2) NOT NULL DEFAULT 0,
-  status VARCHAR(50) NOT NULL DEFAULT 'Available' CHECK (status IN ('Available', 'Assigned', 'Maintenance', 'Retired')),
+  status VARCHAR(50) NOT NULL DEFAULT 'Available' CHECK (status IN ('Available', 'Assigned', 'Maintenance', 'Lost', 'Damaged', 'Retired', 'Disposed')),
   assigned_to INT REFERENCES users(id) ON DELETE SET NULL,
   location VARCHAR(200),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,

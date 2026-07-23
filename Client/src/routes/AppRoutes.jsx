@@ -7,6 +7,7 @@ import MyAssetsPage from '../pages/MyAssetsPage';
 import CategoriesPage from '../pages/CategoriesPage';
 import MaintenancePage from '../pages/MaintenancePage';
 import MainLayout from '../layouts/MainLayout';
+import SettingsPage from '../pages/SettingsPage';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -65,6 +66,14 @@ export default function AppRoutes() {
           element={
             <RoleRoute allowedRoles={['asset_manager', 'admin']}>
               <MaintenancePage />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="settings"
+          element={
+            <RoleRoute allowedRoles={['admin']}>
+              <SettingsPage />
             </RoleRoute>
           }
         />

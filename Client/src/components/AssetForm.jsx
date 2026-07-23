@@ -119,7 +119,10 @@ export default function AssetForm({ asset, onSaved, onCancel }) {
               <option value="Available">Available</option>
               <option value="Assigned">Assigned</option>
               <option value="Maintenance">Maintenance</option>
+              <option value="Lost">Lost</option>
+              <option value="Damaged">Damaged</option>
               <option value="Retired">Retired</option>
+              <option value="Disposed">Disposed</option>
             </select>
           </div>
           

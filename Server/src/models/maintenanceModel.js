@@ -35,10 +35,19 @@ async function createMaintenanceRecord(data) {
   }
 
   const result = await pool.query(
-    `INSERT INTO maintenance_history (asset_id, performed_by, maintenance_type, description)
-     VALUES ($1, $2, $3, $4)
+    `INSERT INTO maintenance_history (asset_id, performed_by, maintenance_type, description, cost, technician, completion_date, remarks)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
      RETURNING *`,
-    [data.asset_id, data.performed_by, data.maintenance_type, data.description]
+    [
+      data.asset_id,
+      data.performed_by,
+      data.maintenance_type,
+      data.description,
+      data.cost || 0,
+      data.technician || '',
+      data.completion_date || null,
+      data.remarks || ''
+    ]
   );
   return result.rows[0];
 }

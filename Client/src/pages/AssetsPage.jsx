@@ -22,6 +22,10 @@ export default function AssetsPage() {
   const [showMaintenanceModal, setShowMaintenanceModal] = useState(false);
   const [mType, setMType] = useState('');
   const [mDesc, setMDesc] = useState('');
+  const [mCost, setMCost] = useState('');
+  const [mTechnician, setMTechnician] = useState('');
+  const [mCompletionDate, setMCompletionDate] = useState('');
+  const [mRemarks, setMRemarks] = useState('');
   const [modalError, setModalError] = useState('');
 
   const loadAssets = () => {
@@ -102,12 +106,20 @@ export default function AssetsPage() {
       await api.post('/maintenance', {
         asset_id: selectedAsset.id,
         maintenance_type: mType,
-        description: mDesc
+        description: mDesc,
+        cost: mCost ? Number(mCost) : 0,
+        technician: mTechnician,
+        completion_date: mCompletionDate || null,
+        remarks: mRemarks
       });
       setShowMaintenanceModal(false);
       setSelectedAsset(null);
       setMType('');
       setMDesc('');
+      setMCost('');
+      setMTechnician('');
+      setMCompletionDate('');
+      setMRemarks('');
       loadAssets();
     } catch (err) {
       setModalError(err.response?.data?.message || 'Failed to log maintenance');
@@ -165,7 +177,10 @@ export default function AssetsPage() {
           <option value="Available">Available</option>
           <option value="Assigned">Assigned</option>
           <option value="Maintenance">Maintenance</option>
+          <option value="Lost">Lost</option>
+          <option value="Damaged">Damaged</option>
           <option value="Retired">Retired</option>
+          <option value="Disposed">Disposed</option>
         </select>
       </div>
 
@@ -300,16 +315,57 @@ export default function AssetsPage() {
                 <label>Description</label>
                 <textarea
                   placeholder="Details of the work performed or issue detected..."
-                  rows={4}
+                  rows={2}
                   value={mDesc}
                   onChange={(e) => setMDesc(e.target.value)}
                   required
+                />
+              </div>
+              <div className="form-group">
+                <label>Repair Cost (INR)</label>
+                <input
+                  type="number"
+                  placeholder="e.g. 2500"
+                  value={mCost}
+                  onChange={(e) => setMCost(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label>Technician or Service Center</label>
+                <input
+                  type="text"
+                  placeholder="e.g. ABC Service Center"
+                  value={mTechnician}
+                  onChange={(e) => setMTechnician(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label>Completion Date</label>
+                <input
+                  type="date"
+                  value={mCompletionDate}
+                  onChange={(e) => setMCompletionDate(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label>Remarks</label>
+                <textarea
+                  placeholder="Remarks or final notes..."
+                  rows={2}
+                  value={mRemarks}
+                  onChange={(e) => setMRemarks(e.target.value)}
                 />
               </div>
               <div className="button-row" style={{ marginTop: '1.5rem' }}>
                 <button type="button" className="secondary" onClick={() => {
                   setShowMaintenanceModal(false);
                   setSelectedAsset(null);
+                  setMType('');
+                  setMDesc('');
+                  setMCost('');
+                  setMTechnician('');
+                  setMCompletionDate('');
+                  setMRemarks('');
                   setModalError('');
                 }}>Cancel</button>
                 <button type="submit" className="primary">Log & Put in Service</button>

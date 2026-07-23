@@ -19,7 +19,7 @@ router.post(
     body('category_id').isInt(),
     body('purchase_date').isISO8601().toDate(),
     body('purchase_cost').isFloat(),
-    body('status').optional().isIn(['Available', 'Assigned', 'Maintenance', 'Retired'])
+    body('status').optional().isIn(['Available', 'Assigned', 'Maintenance', 'Lost', 'Damaged', 'Retired', 'Disposed'])
   ],
   validate,
   assetController.createAsset
