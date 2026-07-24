@@ -1,4 +1,5 @@
 Server/.env
+Client/.env
 **/node_modules/
 Client/dist/
 *.log
