@@ -107,7 +107,9 @@ class MockRepository {
   }
 
   async getAllAssets() {
-    return this.assets.map((asset) => this._enrichAsset(asset));
+    return this.assets
+      .map((asset) => this._enrichAsset(asset))
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   }
 
   async getAssetById(id) {

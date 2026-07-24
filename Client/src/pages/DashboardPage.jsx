@@ -48,7 +48,7 @@ export default function DashboardPage() {
           retired: statusCounts.retired,
           value: statusCounts.value
         });
-        setRecentAssets(assets.slice(0, 5));
+        setRecentAssets(assets.slice(0, 3));
       })
       .catch((err) => setError(err.response?.data?.message || 'Unable to load dashboard data'))
       .finally(() => setLoading(false));
