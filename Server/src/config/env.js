@@ -40,7 +40,7 @@ export default {
   port: process.env.PORT || 4000,
   nodeEnv: process.env.NODE_ENV || 'development',
   jwtSecret: process.env.JWT_SECRET || 'development-secret',
-  authMode: process.env.AUTH_MODE || 'mock',
+  authMode: (process.env.AUTH_MODE || 'mock').toLowerCase(),
   xsuaa: xsuaaCredentials,
   db: {
     host: postgresCredentials.hostname || postgresCredentials.host || process.env.DB_HOST || 'localhost',
