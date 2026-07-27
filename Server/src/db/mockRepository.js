@@ -176,10 +176,17 @@ class MockRepository {
     const record = { id: this.nextMaintenanceId++, ...payload, performed_at: new Date().toISOString() };
     this.maintenance.push(record);
     
-    // Also change the asset's status to Maintenance automatically
+    // Also change the asset's status depending on completion date
     const assetIndex = this.assets.findIndex((a) => a.id === Number(payload.asset_id));
     if (assetIndex !== -1) {
-      this.assets[assetIndex].status = 'Maintenance';
+      const compDate = payload.completion_date ? new Date(payload.completion_date) : null;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (compDate) {
+        compDate.setHours(0, 0, 0, 0);
+      }
+      const isCompleted = compDate && compDate <= today;
+      this.assets[assetIndex].status = isCompleted ? 'Available' : 'Maintenance';
     }
 
     return record;

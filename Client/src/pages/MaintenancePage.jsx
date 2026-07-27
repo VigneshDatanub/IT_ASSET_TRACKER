@@ -42,9 +42,20 @@ export default function MaintenancePage() {
                   <p className="asset-id">{record.asset_id || 'Asset record'}</p>
                   <h3>{record.maintenance_type}</h3>
                 </div>
-                <span className={`status-badge ${record.completion_date ? 'available' : 'maintenance'}`}>
-                  {record.completion_date ? 'Completed' : 'In Service'}
-                </span>
+                {(() => {
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+                  const compDate = record.completion_date ? new Date(record.completion_date) : null;
+                  if (compDate) {
+                    compDate.setHours(0, 0, 0, 0);
+                  }
+                  const isCompleted = compDate && compDate <= today;
+                  return (
+                    <span className={`status-badge ${isCompleted ? 'available' : 'maintenance'}`}>
+                      {isCompleted ? 'Completed' : 'In Service'}
+                    </span>
+                  );
+                })()}
               </div>
               
               <div className="card-details">

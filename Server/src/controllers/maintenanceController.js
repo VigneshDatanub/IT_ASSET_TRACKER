@@ -12,7 +12,15 @@ export const createMaintenance = asyncHandler(async (req, res) => {
     ...req.body,
     performed_by: req.user.id
   });
-  // Update asset status to Maintenance in both mock and postgres mode
-  await assetModel.updateAsset(req.body.asset_id, { status: 'Maintenance' });
+  // Update asset status depending on completion date
+  const compDate = req.body.completion_date ? new Date(req.body.completion_date) : null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  if (compDate) {
+    compDate.setHours(0, 0, 0, 0);
+  }
+  const isCompleted = compDate && compDate <= today;
+  const nextStatus = isCompleted ? 'Available' : 'Maintenance';
+  await assetModel.updateAsset(req.body.asset_id, { status: nextStatus });
   res.status(201).json({ success: true, data: record });
 });
