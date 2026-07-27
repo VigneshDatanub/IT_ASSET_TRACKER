@@ -40,6 +40,10 @@ CREATE TABLE IF NOT EXISTS maintenance_history (
   performed_by INT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
   maintenance_type VARCHAR(100) NOT NULL,
   description TEXT NOT NULL,
+  cost NUMERIC(12,2) DEFAULT 0,
+  technician VARCHAR(200),
+  completion_date DATE,
+  remarks TEXT,
   performed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -49,3 +53,9 @@ CREATE INDEX IF NOT EXISTS idx_assets_status ON assets(status);
 CREATE INDEX IF NOT EXISTS idx_assets_category_id ON assets(category_id);
 CREATE INDEX IF NOT EXISTS idx_assets_assigned_to ON assets(assigned_to);
 CREATE INDEX IF NOT EXISTS idx_maintenance_asset_id ON maintenance_history(asset_id);
+
+-- Migration: Add missing columns if they do not exist in older tables
+ALTER TABLE maintenance_history ADD COLUMN IF NOT EXISTS cost NUMERIC(12,2) DEFAULT 0;
+ALTER TABLE maintenance_history ADD COLUMN IF NOT EXISTS technician VARCHAR(200);
+ALTER TABLE maintenance_history ADD COLUMN IF NOT EXISTS completion_date DATE;
+ALTER TABLE maintenance_history ADD COLUMN IF NOT EXISTS remarks TEXT;
