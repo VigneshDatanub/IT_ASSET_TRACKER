@@ -5,6 +5,7 @@ Client/dist/
 *.log
 Server/server.err
 .vscode
+node_modules
 
 
 
